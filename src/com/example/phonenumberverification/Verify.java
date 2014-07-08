@@ -29,6 +29,7 @@ public class Verify extends Activity {
 	CountDownTimer mCountDownTimer;
 	SharedPreferences prefs;
 	TextView waiting,time;
+	private SmsListener reciever;
 	String phone_no=null,message = null;
 	int i = 60;
 
@@ -75,7 +76,8 @@ public class Verify extends Activity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("android.provider.Telephony.SMS_RECEIVED");
 		filter.setPriority(2147483647);
-		this.registerReceiver(new SmsListener(), filter,
+		reciever = new SmsListener();
+		registerReceiver(reciever, filter,
 				"android.permission.RECEIVE_SMS", null);
 
 		verify.setOnClickListener(new OnClickListener() {
@@ -152,5 +154,11 @@ public class Verify extends Activity {
 				}
 			}
 		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+	  super.onDestroy();
+	  unregisterReceiver(reciever);
 	}
 }
