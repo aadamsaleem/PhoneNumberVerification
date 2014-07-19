@@ -26,8 +26,6 @@ public class MainActivity extends Activity {
 
 	private EditText et_phone;
 	private Button send;
-	public SharedPreferences prefs;
-	SharedPreferences.Editor editor;
 	private String phone_no;
 	private String message;
 	private int code;
@@ -40,9 +38,6 @@ public class MainActivity extends Activity {
 		et_phone = (EditText) findViewById(R.id.et_phone);
 		send = (Button) findViewById(R.id.send);
 
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		editor = prefs.edit();
-
 		send.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -54,12 +49,11 @@ public class MainActivity extends Activity {
 					code = generateCode();
 					message = generateSMS(code);
 
-					editor.putString("sms", message);
-					editor.putInt("code", code);
-					editor.putString("phone_no", phone_no);
-					editor.commit();
 					sendSMS(getApplicationContext(), phone_no, message);
 					Intent i = new Intent(MainActivity.this, Verify.class);
+					i.putExtra("sms", message);
+					i.putExtra("code", code);
+					i.putExtra("phone_no", phone_no);
 					startActivity(i);
 					finish();
 				} else {

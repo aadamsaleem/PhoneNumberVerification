@@ -12,6 +12,7 @@ import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.telephony.SmsMessage;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -27,19 +28,23 @@ public class Verify extends Activity {
 	private String sms;
 	ProgressBar mProgressBar;
 	CountDownTimer mCountDownTimer;
-	SharedPreferences prefs;
 	TextView waiting,time;
 	private SmsListener reciever;
 	String phone_no=null,message = null;
 	int i = 60;
+	Bundle b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_verify);
 
-		prefs = PreferenceManager
-				.getDefaultSharedPreferences(getBaseContext());
+		
+		b = getIntent().getExtras();
+		sms = b.getString("sms");
+		phone_no = b.getString("phone_no");
+
+		
 		time = (TextView)findViewById(R.id.time);
 		waiting = (TextView)findViewById(R.id.waiting);
 		resend = (Button)findViewById(R.id.resend);
@@ -95,19 +100,12 @@ public class Verify extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				phone_no=prefs.getString("phone_no", null);
-				message = prefs.getString("sms", null);
-				MainActivity.sendSMS(getApplicationContext(),phone_no, message);
+				MainActivity.sendSMS(getApplicationContext(),phone_no, sms);
 			}
 		});
 	}
 
 	public void verify(String message) {
-		int code;
-		String sms, phone_no;
-		code = prefs.getInt("code", 0);
-		sms = prefs.getString("sms", null);
-		phone_no = prefs.getString("phone_no", null);
 		if (message.equals(sms)) {
 			Toast.makeText(getApplicationContext(), "Verified",
 					Toast.LENGTH_LONG).show();
